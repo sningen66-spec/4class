@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Промежуточное оценивание, 1 четверть — Цифровая грамотность и ИИ, 4 класс</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f1f6ee;--card:#fff;--tx:#1f2d1f;--ac:#2f8f4e;--bd:#cfe3c8;--bad:#d83a3a}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121b14;--card:#1b2a1f;--tx:#e8f3ea;--ac:#58c47a;--bd:#335239}}
+:root[data-theme="dark"]{--bg:#121b14;--card:#1b2a1f;--tx:#e8f3ea;--ac:#58c47a;--bd:#335239}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:"Trebuchet MS",Verdana,sans-serif;font-size:18px;line-height:1.5;-webkit-user-select:none;user-select:none}
+input,textarea{-webkit-user-select:text;user-select:text}
+.wrap{max-width:820px;margin:0 auto;padding:16px}
+header{background:var(--ac);color:#fff;border-radius:16px;padding:16px 20px}
+header h1{margin:0 0 6px;font-size:1.3rem}header p{margin:2px 0;font-size:.95rem}
+.card{background:var(--card);border:2px solid var(--bd);border-radius:16px;padding:16px 20px;margin:16px 0}
+.card h2{margin:0 0 4px;font-size:1.15rem}
+.goal{font-size:.85rem;opacity:.8;margin:0 0 10px}
+.pts{float:right;background:var(--ac);color:#fff;border-radius:20px;padding:0 12px;font-size:.9rem}
+.q{margin:12px 0;padding-bottom:8px;border-bottom:1px dashed var(--bd)}
+label.o{display:block;padding:5px 8px;border-radius:8px;cursor:pointer}
+label.o:hover{background:var(--bg)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+select,input[type=text]{font:inherit;color:var(--tx);background:var(--bg);border:2px solid var(--bd);border-radius:10px;padding:4px 8px;max-width:100%}
+input.f{width:4em;text-align:center}
+#nm{width:100%}
+button{font:inherit;background:var(--ac);color:#fff;border:0;border-radius:12px;padding:10px 24px;cursor:pointer;margin:6px 0}
+.warn{display:none;position:sticky;bottom:8px;background:var(--bad);color:#fff;border-radius:10px;padding:6px 12px;font-size:.9rem;text-align:center}
+.res{display:none;text-align:center}.big{font-size:2.4rem;font-weight:bold;color:var(--ac)}
+.fb{font-size:.9rem}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:8px 0}
+td,th{border:1px solid var(--bd);padding:4px 8px;text-align:left}
+.blk{background:var(--c);color:#fff;border-radius:8px;padding:3px 10px;margin:3px 0;width:fit-content;max-width:100%;font-size:.95rem}
+.blk .in{margin:4px 0 4px 12px;padding-left:10px;border-left:6px solid rgba(0,0,0,.28)}
+.blk input.f{width:3em;padding:0 4px;border-radius:12px;color:#222;background:#fff}
+.v{background:#fff;color:#c4560c;border-radius:10px;padding:0 8px;font-weight:bold}
+.expr{background:var(--bg);border:2px solid var(--bd);border-radius:10px;padding:2px 10px;display:inline-block;margin:2px 0}
+.given{background:var(--bg);border-left:5px solid var(--ac);padding:4px 12px;border-radius:6px;margin:6px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<h1>🧩 Цифровая грамотность и искусственный интеллект — 4 класс</h1>
+<p>Промежуточное оценивание за 1 четверть · Максимум: <b>16 баллов</b></p>
+<p>⚠️ Копировать и вставлять нельзя: ответы набирай и выбирай сам!</p>
+</header>
+<div class="card"><b>Имя и фамилия:</b><br><input type="text" id="nm" maxlength="40" autocomplete="off" placeholder="Набери свои имя и фамилию"></div>
+<div id="tasks"></div>
+<div style="text-align:center"><button id="go">Завершить и узнать результат</button></div>
+<div class="card res" id="res">
+<div>Результат: <span class="big" id="tot">0</span> из 16</div>
+<p id="mark"></p><table id="tbl"></table>
+<p id="svmsg" class="fb"></p>
+<button id="sv" type="button">💾 Сохранить результат на компьютер</button>
+</div>
+<div class="warn" id="warn">🚫 Копировать, вырезать и вставлять нельзя!</div>
+</div>
+
+<script>
+var n=0;
+function B(c,t,inner){return '<div class="blk" style="--c:'+c+'">'+t+(inner?'<div class="in">'+inner+'</div>':'')+'</div>'}
+var CT='#d9890a',VR='#e8761a',MV='#3b82f6',LK='#8b5cf6';
+function V(x){return '<span class="v">'+x+'</span>'}
+function NUM(a){return '<input type="text" class="f" inputmode="numeric" autocomplete="off" data-a="'+a+'">'}
+function TF(a){return '<select class="f" data-a="'+a+'"><option value="">?</option><option>Да</option><option>Нет</option></select>'}
+function MC(opts,a){n++;var h='<div class="mc" data-a="'+a+'">';opts.forEach(function(o,i){h+='<label class="o"><input type="radio" name="m'+n+'" value="'+i+'"> '+o+'</label>'});return h+'</div>'}
+function Q(t,b){return '<div class="q"><b>'+t+'</b><div>'+b+'</div></div>'}
+
+var S=[
+{t:'Задание 1. Переменные',g:'4.4.2.1 Использовать переменные в среде программирования Scratch',items:[
+Q('1. Что такое переменная в Scratch?',MC(['Рисунок, который можно нарисовать на сцене','Ячейка с именем, в которой хранится значение, меняющееся в программе','Звук, который играет в игре'],1)),
+Q('2. Прочитай программу. Чему равна переменная в конце?',
+ B(VR,'задать '+V('счёт')+' значение 0')+B(CT,'повторить 3 раза',B(VR,'изменить '+V('счёт')+' на 2'))+'<div class="given">счёт = '+NUM(6)+'</div>'),
+Q('3. Прочитай программу. Чему равна переменная в конце?',
+ B(VR,'задать '+V('очки')+' значение 10')+B(VR,'изменить '+V('очки')+' на -3')+B(VR,'изменить '+V('очки')+' на 2')+'<div class="given">очки = '+NUM(9)+'</div>'),
+Q('4. В игре нужно считать собранные яблоки. Какой блок увеличивает переменную «яблоки» на 1?',MC(['задать яблоки значение 1','изменить яблоки на 1','показать переменную яблоки'],1))]},
+
+{t:'Задание 2. Вложенные циклы и анимация',g:'4.4.1.1 Разрабатывать алгоритм вложенного цикла и представлять его в словесной и графической форме',items:[
+Q('1. Сколько раз кот скажет «Привет!»?',
+ B(CT,'повторить 3 раза',B(CT,'повторить 2 раза',B(LK,'говорить «Привет!»')))+'<div class="given">Ответ: '+NUM(6)+' раз</div>'),
+Q('2. Спрайт с опущенным пером выполняет программу. Какую фигуру он нарисует?',
+ B(CT,'повторить 4 раза',B(MV,'идти 50 шагов')+B(MV,'повернуть ↻ на 90 градусов'))+MC(['Треугольник','Квадрат','Круг'],1)),
+Q('3. Нужно выложить 3 ряда по 5 плиток. Впиши числа в алгоритм.',
+ '<div class="given">Словесная запись: «Повторить … раз: (повторить … раз: положить плитку), перейти на новый ряд».</div>'+
+ B(CT,'повторить '+NUM(3)+' раз',B(CT,'повторить '+NUM(5)+' раз',B(MV,'положить плитку'))+B(MV,'перейти на новый ряд')))]},
+
+{t:'Задание 3. Логические операторы',g:'4.4.2.3 Использовать логические операторы в среде программирования Scratch',items:[
+Q('Прочитай ситуацию и выбери ответ «Да» или «Нет».','<div>1) Я иду гулять, если светит солнце <b>И</b> тепло. Сегодня светит солнце, но холодно. Пойду ли я гулять? '+TF('Нет')+'</div><div>2) Я беру зонт, если идёт дождь <b>ИЛИ</b> дует сильный ветер. Сегодня идёт дождь, а ветра нет. Возьму ли я зонт? '+TF('Да')+'</div><div>3) Я иду в школу, если <b>НЕ</b> воскресенье. Сегодня воскресенье. Пойду ли я в школу? '+TF('Нет')+'</div>'),
+Q('4. Кот идёт к миске, только если он голоден И миска не пуста. Какой оператор нужно взять?',MC(['и (нужно, чтобы выполнились оба условия)','или (достаточно одного условия)','не (меняет условие на противоположное)'],0))]},
+
+{t:'Задание 4. Операторы сравнения',g:'4.4.2.3 Использовать логические операторы в среде программирования Scratch',items:[
+Q('У Айдара '+V('a')+' = 8 яблок, у Мадины '+V('b')+' = 5 яблок. Так ли это? Выбери «Да» или «Нет».',
+ '<div>1) <span class="expr">a &gt; b</span> (у Айдара яблок больше, чем у Мадины) '+TF('Да')+'</div><div>2) <span class="expr">a &lt; b</span> (у Айдара яблок меньше, чем у Мадины) '+TF('Нет')+'</div><div>3) <span class="expr">b = 5</span> (у Мадины ровно 5 яблок) '+TF('Да')+'</div><div>4) <span class="expr">(a &gt; 6) и (b &gt; 6)</span> (у обоих больше 6 яблок) '+TF('Нет')+'</div>')]}
+];
+
+var T=document.getElementById('tasks');
+S.forEach(function(s,i){var d=document.createElement('div');d.className='card';d.id='sec'+i;
+ d.innerHTML='<h2>'+s.t+' <span class="pts">4 балла</span></h2><p class="goal">'+s.g+'</p>'+s.items.join('');T.appendChild(d)});
+
+// ---- запрет буфера обмена ----
+var w=document.getElementById('warn'),tm;
+function block(e){e.preventDefault();e.stopPropagation();w.style.display='block';clearTimeout(tm);tm=setTimeout(function(){w.style.display='none'},2500)}
+['paste','copy','cut','drop','dragstart','contextmenu'].forEach(function(ev){document.addEventListener(ev,block,true)});
+document.addEventListener('keydown',function(e){var k=(e.key||'').toLowerCase(),c=e.ctrlKey||e.metaKey;
+ if((c&&['v','c','x','insert','м','с','ч'].indexOf(k)>-1)||(e.shiftKey&&(k==='insert'||k==='delete')))block(e)},true);
+document.addEventListener('beforeinput',function(e){
+ if(/paste|drop/i.test(e.inputType||''))block(e);
+ if(e.inputType==='insertText'&&e.data&&e.data.length>1)block(e)},true);
+
+// ---- проверка ----
+var RES=null;
+function score(sec){var p=0;
+ sec.querySelectorAll('.mc').forEach(function(m){var r=m.querySelector('input:checked');if(r&&r.value===m.dataset.a)p++});
+ sec.querySelectorAll('.f').forEach(function(f){if(f.value.trim()===f.dataset.a)p++});return p}
+document.getElementById('go').onclick=function(){
+ var nm=document.getElementById('nm').value.trim();
+ if(!nm){alert('Набери своё имя!');return}
+ var ps=[],sum=0,h='<tr><th>Задание</th><th>Цель</th><th>Баллы</th></tr>';
+ S.forEach(function(s,i){var p=score(document.getElementById('sec'+i));ps.push(p);sum+=p;
+  h+='<tr><td>'+s.t+'</td><td>'+s.g.split(' ')[0]+'</td><td>'+p+' / 4</td></tr>'});
+ document.getElementById('tbl').innerHTML=h;document.getElementById('tot').textContent=sum;
+ var pr=Math.round(sum/16*100);
+ var m=pr>=85?'🌟 Отлично! Ты настоящий программист!':pr>=65?'👍 Хорошо! Повтори немного, и будет отлично.':pr>=40?'🙂 Неплохо. Повтори темы и попробуй ещё раз.':'📘 Нужно повторить темы. У тебя всё получится!';
+ var mk=document.getElementById('mark');mk.textContent='';var b=document.createElement('b');b.textContent=nm;mk.appendChild(b);mk.appendChild(document.createTextNode(', '+m));
+ var r=document.getElementById('res');r.style.display='block';r.scrollIntoView({behavior:'smooth'});
+ this.disabled=true;RES={name:nm,ps:ps,sum:sum,pr:pr};saveResult();
+};
+
+// ---- автосохранение результата (CSV, открывается в Excel) ----
+function csvCell(s){s=String(s);if(/^[=+\-@]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"'}
+async function saveResult(){
+ if(!RES)return;var m=document.getElementById('svmsg');
+ var nm=RES.name.replace(/[^A-Za-z0-9А-Яа-яЁё_ -]/g,'').trim().replace(/\s+/g,'_')||'ученик';
+ var fn='Результат_4класс_'+nm+'.csv';
+ var head=['Имя и фамилия','Дата и время','Переменные (из 4)','Вложенные циклы (из 4)','Логические операторы (из 4)','Операторы сравнения (из 4)','Итого (из 16)','Процент'];
+ var row=[RES.name,new Date().toLocaleString('ru-RU')].concat(RES.ps,[RES.sum,RES.pr+'%']);
+ var csv='\uFEFF'+head.map(csvCell).join(';')+'\r\n'+row.map(csvCell).join(';')+'\r\n';
+ try{
+  var d=window.claude&&claude.use?await claude.use('downloads'):null;
+  if(d){await d.save({filename:fn,data:csv});m.textContent='✅ Результат сохранён в файл: '+fn;return}
+ }catch(e){if(e&&e.code==='declined'){m.textContent='Сохранение отменено. Нажми кнопку «Сохранить», чтобы повторить.';return}}
+ try{
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download=fn;document.body.appendChild(a);a.click();a.remove();
+  m.textContent='✅ Результат сохранён в папку «Загрузки»: '+fn;
+ }catch(e){m.textContent='⚠️ Не удалось сохранить файл. Сделай скриншот результата.'}
+}
+document.getElementById('sv').onclick=saveResult;
+</script>
+</body>
+</html>
